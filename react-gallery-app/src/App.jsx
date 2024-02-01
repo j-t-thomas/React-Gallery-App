@@ -1,54 +1,57 @@
 import React, { useRef } from "react";
 import { useEffect, useState } from "react";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router";
 import axios from 'axios';
 import apiKey from "./config";
 import "./index.css";
 import Nav from './components/Nav';
 import Search from './components/Search'
 import PhotoList from "./components/PhotoList";
-import { BrowserRouter } from "react-router-dom"
 
 function App() {
-    const navigate = useNavigate()
-
-    const searchText = useRef
 
     // State variables to manage the query and photo data
     const [query, setQuery] = useState("cats");
     const [photos, setPhotos] = useState([]);
-
-    // URL for Flickr API with the initial query and API key
-    const [url, setUrl] = useState(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&per_page=24&format=json&nojsoncallback=1`)
-
+    
+    const location = useLocation()
+    const key = apiKey
+    const navigate = useNavigate()
+    
     // useEffect to fetch data when the component mounts or when the URL changes
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Fetch data from Flickr API using Axios
-                const response = await axios.get(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&per_page=24&format=json&nojsoncallback=1`)
-                
-                // Update the state with the fetched photos
-                setPhotos(response.data.photos.photo)
-            } 
-            catch (error) {
-                console.error('Error fetching data', error)
-            }
-        }
-        
-        // Call the fetchData function
-        fetchData();
-    }, [url])
+      let path = location.pathname.slice(1)
+      console.log(path)
+      if (path === "cats" || path === "dogs" || path === "computers") {
+        fetchData(path)
+      }
+    }, [location]
+    )
+
+    function fetchData(query) {
+      axios
+        .get(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${key}&tags=${query}&per_page=24&format=json&nojsoncallback=1`)
+        .then((response) => {
+          setPhotos(response.data.photos.photo)
+        })
+        .catch(
+          (error) => {
+            console.log("Error fetching and parsing data", error)
+          }, [query] 
+        )
+    }
 
     // Handler function to update the query state when the search input changes
     const handleQueryChange = (searchText) => {
       setQuery(searchText)
+      fetchData(searchText)
+      navigate(`/search/${searchText}`)
     };
 
     return (
-        <div>
+        <div className="container">
             {/* Search component for user input */}
-            <Search />
+            <Search changeQuery={handleQueryChange} />
 
             {/* Navigation component for default topics */}
             <Nav />
@@ -59,16 +62,16 @@ function App() {
                 <Route path= "/" element={<Navigate to = "cats" />} />
 
                 {/* Route for '/cats' that renders the PhotoList component with 'cats' as the topic */}
-                <Route path= "/cats" element={<PhotoList photos = {photos} title = 'cats' />} />
+                <Route path= "/cats" element={<PhotoList data = {photos} />} />
 
                 {/* Route for '/dogs' that renders the PhotoList component with 'photos' as the topic */}
-                <Route path= "/dogs" element={<PhotoList photos = {photos} title = 'dogs' />} />
+                <Route path= "/dogs" element={<PhotoList data = {photos} />} />
 
                 {/* Route for '/computers' that renders the PhotoList component with 'photos' as the topic */}
-                <Route path= "/computers" element={<PhotoList photos = {photos} title = 'computers'/>} />
+                <Route path= "/computers" element={<PhotoList data = {photos} />} />
 
                 {/* Route for '/search/:query' that renders the PhotoList component with 'photos' as the data */}
-                <Route path= "/search/:query" element={<PhotoList photos = {photos} title = {`Search Results for ${query}`}/>} />
+                <Route path= "/search/:query" element={<PhotoList data = {photos} />} />
             </Routes>
         </div>
     )
