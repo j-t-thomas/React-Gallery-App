@@ -12,7 +12,7 @@ const PhotoList = ({ photos, title }) => {
             {/* Unordered list to contain individual Photo components */}
             <ul>
                 {/* Map through the 'photos' array and render a Photo component for each photo */}
-                {photos.map(photo => (
+                {photos && photos.map(photo => (
                     <Photo key={photo.id} photo={photo} title={photo.title} />
                 ))}
             </ul>

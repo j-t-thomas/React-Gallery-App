@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useEffect, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import apiKey from "./config";
 import "./index.css";
 import Nav from './components/Nav';
 import Search from './components/Search'
 import PhotoList from "./components/PhotoList";
+import { BrowserRouter } from "react-router-dom"
 
 function App() {
+    const navigate = useNavigate()
+
+    const searchText = useRef
+
     // State variables to manage the query and photo data
     const [query, setQuery] = useState();
     const [photos, setPhotos] = useState([]);
@@ -21,8 +26,8 @@ function App() {
         const fetchData = async () => {
             try {
                 // Fetch data from Flickr API using Axios
-                const response = await axios.get(url)
-
+                const response = await axios.get(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&per_page=24&format=json&nojsoncallback=1`)
+                console.log(response)
                 // Update the state with the fetched photos
                 setPhotos(response.data.photos.photo)
             } 
