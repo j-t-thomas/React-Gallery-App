@@ -15,7 +15,7 @@ function App() {
     const searchText = useRef
 
     // State variables to manage the query and photo data
-    const [query, setQuery] = useState();
+    const [query, setQuery] = useState("cats");
     const [photos, setPhotos] = useState([]);
 
     // URL for Flickr API with the initial query and API key
@@ -27,7 +27,7 @@ function App() {
             try {
                 // Fetch data from Flickr API using Axios
                 const response = await axios.get(`https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&per_page=24&format=json&nojsoncallback=1`)
-                console.log(response)
+                
                 // Update the state with the fetched photos
                 setPhotos(response.data.photos.photo)
             } 
@@ -59,16 +59,16 @@ function App() {
                 <Route path= "/" element={<Navigate to = "cats" />} />
 
                 {/* Route for '/cats' that renders the PhotoList component with 'cats' as the topic */}
-                <Route path= "/cats" element={<PhotoList topic = "cats" />} />
+                <Route path= "/cats" element={<PhotoList photos = {photos} title = 'cats' />} />
 
                 {/* Route for '/dogs' that renders the PhotoList component with 'photos' as the topic */}
-                <Route path= "/dogs" element={<PhotoList topic = {photos} />} />
+                <Route path= "/dogs" element={<PhotoList photos = {photos} title = 'dogs' />} />
 
                 {/* Route for '/computers' that renders the PhotoList component with 'photos' as the topic */}
-                <Route path= "/computers" element={<PhotoList topic = {photos} />} />
+                <Route path= "/computers" element={<PhotoList photos = {photos} title = 'computers'/>} />
 
                 {/* Route for '/search/:query' that renders the PhotoList component with 'photos' as the data */}
-                <Route path= "/search/:query" element={<PhotoList data = {photos} />} />
+                <Route path= "/search/:query" element={<PhotoList photos = {photos} title = {`Search Results for ${query}`}/>} />
             </Routes>
         </div>
     )

@@ -6,12 +6,11 @@ const Photo = ({ photo }) => {
         // List item containing an image
         <li>
             {/* Alternative text for the image, using the title of the photo */}
-            alt={photo.title}
+            
 
             {/* Image element with source (src) dynamically generated based on the photo object */}
             <img
-                src={`https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg`}
-            />
+                src={`https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}.jpg`} />
         </li>
     );
 };
